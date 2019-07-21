@@ -40,13 +40,13 @@ void MainWindow::recvInfo(){
         quint16 UEport = 10002;
         if(datagram[0] == 0x01){//是注册的,需要判别是否是带有鉴权注册的
             if(datagram.size()==21){//不带鉴权的注册
-                datagram[0] = 0x02;
+                datagram[2] = 0x02;
                 qDebug()<<"接收到的数据长度 "<<datagram.size();
                 int num = recvSocket->writeDatagram(datagram,UEaddr,UEport);
                 qDebug()<<"authorized command size: "<<num;
             }
             else{//带有鉴权的注册
-                datagram[0] = 0x03;
+                datagram[2] = 0x03;
                 qDebug()<<"接收到的数据长度 "<<datagram.size();
                 int num = recvSocket->writeDatagram(datagram,UEaddr,UEport);
                 qDebug()<<"voice register rsp size: "<<num;
