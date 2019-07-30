@@ -9,8 +9,11 @@
 #include <QNetworkInterface>
 #include <QMessageBox>
 #include <QDebug>
+#include <QThread>
+
 #include <string>
 #include <cstring>
+using namespace std;
 namespace Ui {
 class MainWindow;
 }
@@ -24,6 +27,8 @@ public:
     ~MainWindow();
     QUdpSocket *recvSocket;
 
+    QHostAddress UEaddr;
+    quint16 UEport;
     quint16 recvPort;//接收注册信息用的端口
 
     unsigned char authCommand[16]; //我先暂定是16字节，其中Nonce是8字节，前面信息占8字节
@@ -35,6 +40,24 @@ public:
     void init_Rsp();
     void init_DeRegisterReq();
     void init_DeRegisterRsp();
+
+    /*呼叫状态的变量*/
+    unsigned char callSetup[21];
+    unsigned char callSetupAck[7];
+    unsigned char callAllerting[7];
+    unsigned char callConnect[8];
+    unsigned char callConnectAck[8];
+    unsigned char callDisconnect[7];
+    unsigned char callReleaseRsp[8];
+    /*以下是呼叫过程的初始化*/
+    void init_callSetup(string calledBCDNumber);
+    void init_callSetupAck();
+    void init_callAlerting();
+    void init_callConnect();
+    void init_callConnectAck();
+    void init_callDisconnect(int cause);
+    void init_callReleaseRsp(int cause);
+
 private:
     Ui::MainWindow *ui;
 
