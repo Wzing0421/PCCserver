@@ -77,7 +77,6 @@ void MainWindow::recvInfo(){
             qDebug()<<"------------";
         }
         else if(judge == 0x05){
-
             qDebug()<<"------------";
             qDebug()<<"接收到voice DeRegister Rsp ,长度是： "<<datagram.size();
             qDebug()<<"------------";
