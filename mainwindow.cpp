@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     init_callConnectAck();
     int cause = 27;
     init_callDisconnect(cause);//UE正常呼叫释放
+    init_callReleaseReq(cause);
     init_callReleaseRsp(cause);
 }
 
@@ -96,15 +97,36 @@ void MainWindow::recvInfo(){
             qDebug()<<"send call allerting size: "<<num;
             qDebug()<<"------------";
 
-            QThread::sleep(2);
-            //send call connect
+
+            QThread::sleep(4);
             num = recvSocket->writeDatagram((char*)callConnect,sizeof(callConnect),UEaddr,UEport);
             qDebug()<<"send call connect size: "<<num;
+            qDebug()<<"------------";
+
+        }
+        else if(judge == 0x07){
+            qDebug()<<"收到call setup ack!";
+            qDebug()<<"------------";
+        }
+        else if(judge == 0x08){
+            qDebug()<<"收到call alerting!";
+            qDebug()<<"------------";
+        }
+        else if(judge == 0x09){
+            qDebug()<<"收到call connect";
+            int num = recvSocket->writeDatagram((char*)callConnectAck,sizeof(callConnectAck),UEaddr,UEport);
+            qDebug()<<"send callConnectAck size: "<<num;
             qDebug()<<"------------";
         }
         else if(judge == 0x0a){
             qDebug()<<"收到 call connect ack ";
             qDebug()<<"------------";
+        }
+        else if(judge == 0x0b){//收到的是call disconnect
+            int num = recvSocket->writeDatagram((char*)callReleaseReq,sizeof(callReleaseReq),UEaddr,UEport);
+            qDebug()<<"send callReleaseReq size: "<<num;
+            qDebug()<<"------------";
+
         }
     }
 }
@@ -230,6 +252,15 @@ void MainWindow::init_callDisconnect(int cause){
     callDisconnect[8] = char(cause);//casue
 
 }
+
+void MainWindow::init_callReleaseReq(int cause){
+    callReleaseReq[0] = 0x00;//protocol version
+    callReleaseReq[1] = 0x08;//message length
+    callReleaseReq[2] = 0x0c;//message type
+    //后面的需要memcpy以下从PCC发送来的call ID
+
+    callReleaseReq[8] = char(cause);//casue
+}
 void MainWindow::init_callReleaseRsp(int cause){
 
     callReleaseRsp[0] = 0x00;//protocol version
@@ -240,3 +271,9 @@ void MainWindow::init_callReleaseRsp(int cause){
     callReleaseRsp[8] = char(cause);//casue
 }
 //注意初始化还需要改成是PCC专用的初始化
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    int num = recvSocket->writeDatagram((char*)callSetup,sizeof(callSetup),UEaddr,UEport);
+    qDebug()<<"send call setup size: "<<num;
+}

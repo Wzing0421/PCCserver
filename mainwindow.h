@@ -49,6 +49,7 @@ public:
     unsigned char callConnectAck[8];
     unsigned char callDisconnect[7];
     unsigned char callReleaseRsp[8];
+    unsigned char callReleaseReq[8];
     /*以下是呼叫过程的初始化*/
     void init_callSetup(string calledBCDNumber);
     void init_callSetupAck();
@@ -57,6 +58,7 @@ public:
     void init_callConnectAck();
     void init_callDisconnect(int cause);
     void init_callReleaseRsp(int cause);
+    void init_callReleaseReq(int cause);
 
 private:
     Ui::MainWindow *ui;
@@ -64,6 +66,7 @@ private:
 private slots:
     void recvInfo();//接收注册消息的回调函数
     void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
 };
 
 #endif // MAINWINDOW_H
