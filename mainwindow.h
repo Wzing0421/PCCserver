@@ -27,8 +27,8 @@ public:
     ~MainWindow();
     QUdpSocket *recvSocket;
 
-    QHostAddress UEaddr;
-    quint16 UEport;
+    QHostAddress ANCaddr;
+    quint16 ANCport;
     quint16 recvPort;//接收注册信息用的端口
 
     unsigned char authCommand[16]; //我先暂定是16字节，其中Nonce是8字节，前面信息占8字节

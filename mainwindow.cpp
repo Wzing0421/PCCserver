@@ -7,10 +7,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    UEaddr.setAddress("162.105.85.198");
-    UEport = 10002;
+    ANCaddr.setAddress("162.105.85.235");
+    ANCport = 50000;
 
-    recvPort = 5000; //暂定服务器的接受端口是5000
+    recvPort = 50000; //暂定服务器的接受端口是5000
     recvSocket = new QUdpSocket(this);
     bool bindflag=  recvSocket->bind(QHostAddress::Any,recvPort);//注册消息接收端口
 
@@ -58,14 +58,14 @@ void MainWindow::recvInfo(){
         if(judge == 0x01){//是注册的,需要判别是否是带有鉴权注册的
             if(datagram.size()==29){//不带鉴权的注册
                 qDebug()<<"接收到的数据长度 "<<datagram.size();
-                int num = recvSocket->writeDatagram((char*)authCommand,sizeof(authCommand),UEaddr,UEport);
+                int num = recvSocket->writeDatagram((char*)authCommand,sizeof(authCommand),ANCaddr,ANCport);
                 qDebug()<<"authorized command size: "<<num;
                 qDebug()<<"------------";
             }
             else{//带有鉴权的注册
                 qDebug()<<"接收到的数据长度 "<<datagram.size();
                 qDebug()<<"------------";
-                int num = recvSocket->writeDatagram((char*)voiceRegisterRsp,sizeof(voiceRegisterRsp),UEaddr,UEport);
+                int num = recvSocket->writeDatagram((char*)voiceRegisterRsp,sizeof(voiceRegisterRsp),ANCaddr,ANCport);
                 qDebug()<<"发送voice register rsp size: "<<num;
                 qDebug()<<"------------";
             }
@@ -73,7 +73,7 @@ void MainWindow::recvInfo(){
         else if(judge == 0x04){
             qDebug()<<"接收到voice DeRegister Req ,长度 "<<datagram.size();
             qDebug()<<"------------";
-            int num = recvSocket->writeDatagram((char*)voiceDeRegisterRsp,sizeof(voiceRegisterRsp),UEaddr,UEport);
+            int num = recvSocket->writeDatagram((char*)voiceDeRegisterRsp,sizeof(voiceRegisterRsp),ANCaddr,ANCport);
             qDebug()<<"voice DeRegister rsp size: "<<num;
             qDebug()<<"------------";
         }
@@ -87,19 +87,19 @@ void MainWindow::recvInfo(){
             qDebug()<<"------------";
             //send call setup ack
 
-            int num = recvSocket->writeDatagram((char*)callSetupAck,sizeof(callSetupAck),UEaddr,UEport);
+            int num = recvSocket->writeDatagram((char*)callSetupAck,sizeof(callSetupAck),ANCaddr,ANCport);
             qDebug()<<"send call setup ack size: "<<num;
             qDebug()<<"------------";
 
             QThread::sleep(2);
             //send call alerting
-            num = recvSocket->writeDatagram((char*)callAllerting,sizeof(callAllerting),UEaddr,UEport);
+            num = recvSocket->writeDatagram((char*)callAllerting,sizeof(callAllerting),ANCaddr,ANCport);
             qDebug()<<"send call allerting size: "<<num;
             qDebug()<<"------------";
 
 
             QThread::sleep(4);
-            num = recvSocket->writeDatagram((char*)callConnect,sizeof(callConnect),UEaddr,UEport);
+            num = recvSocket->writeDatagram((char*)callConnect,sizeof(callConnect),ANCaddr,ANCport);
             qDebug()<<"send call connect size: "<<num;
             qDebug()<<"------------";
 
@@ -114,7 +114,7 @@ void MainWindow::recvInfo(){
         }
         else if(judge == 0x09){
             qDebug()<<"收到call connect";
-            int num = recvSocket->writeDatagram((char*)callConnectAck,sizeof(callConnectAck),UEaddr,UEport);
+            int num = recvSocket->writeDatagram((char*)callConnectAck,sizeof(callConnectAck),ANCaddr,ANCport);
             qDebug()<<"send callConnectAck size: "<<num;
             qDebug()<<"------------";
         }
@@ -123,7 +123,7 @@ void MainWindow::recvInfo(){
             qDebug()<<"------------";
         }
         else if(judge == 0x0b){//收到的是call disconnect
-            int num = recvSocket->writeDatagram((char*)callReleaseReq,sizeof(callReleaseReq),UEaddr,UEport);
+            int num = recvSocket->writeDatagram((char*)callReleaseReq,sizeof(callReleaseReq),ANCaddr,ANCport);
             qDebug()<<"send callReleaseReq size: "<<num;
             qDebug()<<"------------";
 
@@ -171,10 +171,7 @@ void MainWindow::init_DeRegisterRsp(){
 
 void MainWindow::on_pushButton_clicked()
 {
-    QHostAddress UEaddr;
-    UEaddr.setAddress("162.105.85.198");
-    quint16 UEport = 10002;
-    int num = recvSocket->writeDatagram((char*)voiceDeRegisterReq,sizeof(voiceDeRegisterReq),UEaddr,UEport);
+    int num = recvSocket->writeDatagram((char*)voiceDeRegisterReq,sizeof(voiceDeRegisterReq),ANCaddr,ANCport);
     qDebug()<<"voice DeRegister Req size: "<<num;
 
 }
@@ -274,6 +271,6 @@ void MainWindow::init_callReleaseRsp(int cause){
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    int num = recvSocket->writeDatagram((char*)callSetup,sizeof(callSetup),UEaddr,UEport);
+    int num = recvSocket->writeDatagram((char*)callSetup,sizeof(callSetup),ANCaddr,ANCport);
     qDebug()<<"send call setup size: "<<num;
 }
