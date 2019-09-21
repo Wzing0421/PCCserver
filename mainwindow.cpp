@@ -56,7 +56,7 @@ void MainWindow::recvInfo(){
         char judge = datagram[10];
 
         if(judge == 0x01){//是注册的,需要判别是否是带有鉴权注册的
-            if(datagram.size()==29){//不带鉴权的注册
+            if(datagram.size()==30){//不带鉴权的注册
                 qDebug()<<"接收到的数据长度 "<<datagram.size();
                 int num = recvSocket->writeDatagram((char*)authCommand,sizeof(authCommand),ANCaddr,ANCport);
                 qDebug()<<"authorized command size: "<<num;
@@ -138,7 +138,8 @@ void MainWindow::init_auth(){//初始化鉴权信息
     authCommand[1] = 0x10;//Message length == 16 byte
     authCommand[2] = 0x02;//Message type
     //后面的STMSI和Nonce我先都置成0
-    authCommand[15] = 0x01;//算了我把nonce最后一位置为1吧
+    authCommand[8] = 0x09;//length置为9
+    authCommand[16] = 0x01;//算了我把nonce最后一位置为1吧
 
 }
 
@@ -181,17 +182,16 @@ void MainWindow::init_callSetup(string calledBCDNumber){
         return;
     }
     callSetup[0] = 0x00;//Protocol version
-    callSetup[1] = 0x15;//Message length == 21
+    callSetup[1] = 0x10;//Message length == 16
     callSetup[2] = 0x06;//Message type
     //call ID 4个字节填全F
     memset(callSetup+3, 255,4);
-    //STMSI
-    memset(callSetup+7,0,5);
+
     //call type
-    callSetup[12] = 0x01;
+    callSetup[7] = 0x01;
     //init called Party BCD Number
-    callSetup[13] = 0x03;// tag
-    callSetup[14] = 0x08;// length of called BCD number
+    callSetup[8] = 0x02;// tag
+    callSetup[9] = 0x08;// length of called BCD number
 
     /*init BCD number*/
     calledBCDNumber += '?';//为了最后可以补一个1111
@@ -207,7 +207,7 @@ void MainWindow::init_callSetup(string calledBCDNumber){
         unsigned char num2c = (num2<<4);
         nums[i] = nums[i] | num2c;
     }
-    memcpy(callSetup+15,nums,6);
+    memcpy(callSetup+10,nums,6);
 }
 
 void MainWindow::init_callSetupAck(){

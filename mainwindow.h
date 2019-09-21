@@ -31,7 +31,7 @@ public:
     quint16 ANCport;
     quint16 recvPort;//接收注册信息用的端口
 
-    unsigned char authCommand[16]; //我先暂定是16字节，其中Nonce是8字节，前面信息占8字节
+    unsigned char authCommand[17]; //我先暂定是17字节，其中Nonce是9字节，前面信息占8字节
     unsigned char voiceRegisterRsp[8];//这是voice Register Rsp, 一期不携带IMPU(用户IMS标识)
     unsigned char voiceDeRegisterReq[10];//表示的是PCC端发送的voice DeRegister Req
     unsigned char voiceDeRegisterRsp[8];
@@ -42,7 +42,7 @@ public:
     void init_DeRegisterRsp();
 
     /*呼叫状态的变量*/
-    unsigned char callSetup[21];
+    unsigned char callSetup[16];//主叫和被叫的callsetup是不同的
     unsigned char callSetupAck[7];
     unsigned char callAllerting[7];
     unsigned char callConnect[8];
