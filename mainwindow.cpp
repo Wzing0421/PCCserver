@@ -135,7 +135,7 @@ void MainWindow::init_auth(){//初始化鉴权信息
 
     memset(authCommand,0,sizeof(authCommand));
     authCommand[0] = 0x00;//Protocal version
-    authCommand[1] = 0x10;//Message length == 16 byte
+    authCommand[1] = 0x11;//Message length == 16 byte
     authCommand[2] = 0x02;//Message type
     //后面的STMSI和Nonce我先都置成0
     authCommand[8] = 0x09;//length置为9
@@ -149,6 +149,12 @@ void MainWindow::init_Rsp(){//初始化voice register Rsp
     voiceRegisterRsp[1] = 0x0a;//Message length == 10 byte
     voiceRegisterRsp[2] = 0x03;//Message type
     //STMSI 先设置成0
+    voiceRegisterRsp[3] = 0x00;
+    voiceRegisterRsp[4] = 0x00;
+    voiceRegisterRsp[5] = 0x00;
+    voiceRegisterRsp[6] = 0x00;
+    voiceRegisterRsp[7] = 0x00;
+
     voiceRegisterRsp[8] = 0x00;//casue : 成功
     voiceRegisterRsp[9] = 0x01;//单位是3600s，置为0x01表示每3600s周期注册一次
 }
@@ -246,7 +252,7 @@ void MainWindow::init_callDisconnect(int cause){
     callDisconnect[2] = 0x0b;//message type
     //后面的需要memcpy以下从PCC发送来的call ID
 
-    callDisconnect[8] = char(cause);//casue
+    callDisconnect[7] = char(cause);//casue
 
 }
 
@@ -256,7 +262,7 @@ void MainWindow::init_callReleaseReq(int cause){
     callReleaseReq[2] = 0x0c;//message type
     //后面的需要memcpy以下从PCC发送来的call ID
 
-    callReleaseReq[8] = char(cause);//casue
+    callReleaseReq[7] = char(cause);//casue
 }
 void MainWindow::init_callReleaseRsp(int cause){
 
@@ -265,7 +271,7 @@ void MainWindow::init_callReleaseRsp(int cause){
     callReleaseRsp[2] = 0x0d;//message type
     //后面的需要memcpy以下从PCC发送来的call ID
 
-    callReleaseRsp[8] = char(cause);//casue
+    callReleaseRsp[7] = char(cause);//casue
 }
 //注意初始化还需要改成是PCC专用的初始化
 
