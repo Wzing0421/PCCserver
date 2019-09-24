@@ -57,10 +57,19 @@ void MainWindow::recvInfo(){
 
         if(judge == 0x01){//是注册的,需要判别是否是带有鉴权注册的
             if(datagram.size()==30){//不带鉴权的注册
-                qDebug()<<"接收到的数据长度 "<<datagram.size();
-                int num = recvSocket->writeDatagram((char*)authCommand,sizeof(authCommand),ANCaddr,ANCport);
-                qDebug()<<"authorized command size: "<<num;
-                qDebug()<<"------------";
+                if(datagram[16] == 0x00){
+                    qDebug()<<"接收到的数据长度 "<<datagram.size();
+                    int num = recvSocket->writeDatagram((char*)authCommand,sizeof(authCommand),ANCaddr,ANCport);
+                    qDebug()<<"authorized command size: "<<num;
+                    qDebug()<<"------------";
+                }
+                else if(datagram[16] = 0x01){//周期注册
+                    qDebug()<<"接收到的数据长度 "<<datagram.size();
+                    qDebug()<<"------------";
+                    int num = recvSocket->writeDatagram((char*)voiceRegisterRsp,sizeof(voiceRegisterRsp),ANCaddr,ANCport);
+                    qDebug()<<"发送voice register rsp size: "<<num;
+                    qDebug()<<"------------";
+                }
             }
             else{//带有鉴权的注册
                 qDebug()<<"接收到的数据长度 "<<datagram.size();
